@@ -1,0 +1,47 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Desenha um ponto opaco (apenas para o modo 13h)            ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Desenha um ponto na PµGINA DE MONTAGEM ('rpg_pag_montag')  ;
+;----------------------------------------------------------------------------;
+;       Entradas: CX = coordenada horizontal (X)                             ;
+;                 BX = coordenada vertical   (Y)                             ;
+;                 DH = numero da cor a ignorar                               ;
+;                 DL = numero da cor                                         ;
+;                                                                            ;
+;         Sa¡das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+                ASSUME  DS:rpg_pag_montag               ;
+des_pnt_opac    PROC    NEAR                            ; - In¡cio do PROC.
+                PUSH    DS                              ; - Salva os Registr.
+                PUSH    AX                              ; 
+                PUSH    BX                              ;
+                PUSH    CX                              ;
+                PUSH    DX                              ;
+                CMP     CX,20                           ; - Limita a tela
+                JB      des_po_retB                     ;   no espa‡o 
+                CMP     CX,299                          ;   compreendido 
+                JA      des_po_retB                     ;   entre (20,20) a
+                CMP     BX,20                           ;   (300,180).
+                JB      des_po_retB                     ;
+                CMP     BX,179                          ;
+                JA      des_po_retB                     ;
+                JMP     des_po_retC                     ;
+des_po_retB:    POP     DX                              ;
+                JMP     des_po_ret                      ;
+des_po_retC:    MOV     DX,rpg_pag_montag               ; - DS=p g. de mont.
+                MOV     DS,DX                           ; - BX=(320 * Y) + X
+                MOV     AX,320                          ;
+                MUL     BX                              ;
+                ADD     AX,CX                           ;
+                MOV     BX,AX                           ;
+                POP     DX                              ;
+                CMP     DL,DH                           ; - Se cor DL = DH,
+                JZ      des_po_ret                      ;   ignorar.
+                MOV     DS:[BX],DL                      ; - Desenha ponto. 
+des_po_ret:     POP     CX                              ; - Recupera Registr.
+                POP     BX                              ;
+                POP     AX                              ;
+                POP     DS                              ;
+                RET                                     ; - Retorna.
+des_pnt_opac    ENDP                                    ; - Fim do PROC.
+

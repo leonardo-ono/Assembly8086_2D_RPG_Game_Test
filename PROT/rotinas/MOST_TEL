@@ -1,0 +1,30 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Mostra a tela do Jogo                                      ;
+;----------------------------------------------------------------------------;
+;         Funá∆o: as imagens da 'p†gina de montagem' s∆o passadas p/ tela    ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa°das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+                ASSUME  DS:rpg_pag_montag               ; 
+mostra_tela     PROC    NEAR                            ; - In°cio do PROC.
+                PUSH    BX                              ; - Salva Registr.
+                PUSH    DX                              ;
+                PUSH    DS                              ;
+                PUSH    ES                              ;
+                MOV     DX,0A000h                       ; - Aponta ES para 
+                MOV     ES,DX                           ;   seg. de v°deo.
+                MOV     DX,rpg_pag_montag               ; - Aponta DS para
+                MOV     DS,DX                           ;   'rpg_pag_montag'.
+                MOV     BX,0                            ;
+repet_mt:       MOV     DL,DS:[BX]                      ; - Passa as imagens
+                MOV     ES:[BX],DL                      ;   da p†gina de 
+                INC     BX                              ;   montagem para o 
+                CMP     BX,64001                        ;   video atual.
+                JNZ     repet_mt                        ;
+                POP     ES                              ; - Recupera Registr.
+                POP     DS                              ;
+                POP     DX                              ;
+                POP     BX                              ;
+                RET                                     ; - Retorna.
+mostra_tela     ENDP                                    ; - Fim do PROC.

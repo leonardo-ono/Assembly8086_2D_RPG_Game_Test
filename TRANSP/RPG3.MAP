@@ -1,0 +1,12 @@
+
+ Start  Stop   Length Name               Class
+
+ 00000H 000FFH 00100H PILHA              STACK
+ 00100H 0FAFFH 0FA00H DADOA              DATA
+ 0FB00H 1F505H 0FA06H DADOB              DATA
+ 1F510H 2EF0FH 0FA00H DADOC              DATA
+ 2EF10H 2EF35H 00026H CODIB              CODE
+ 2EF40H 2F21FH 002E0H CODIG              CODE
+
+Program entry point at 2EF4:0071
+

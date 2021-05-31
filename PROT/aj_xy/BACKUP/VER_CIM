@@ -1,0 +1,138 @@
+
+                ASSUME  ES:rpg_variaveis
+                ASSUME  DS:rpg_mapa_A
+
+verifica_cim_C proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     Cdet_pos_mapa
+
+Cnomapa_X        DW      0
+Cnomapa_Y        DW      0
+
+Cdet_pos_mapa:  MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                SUB     AX,2
+                ADD     AX,10
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+
+                MOV     CS:[Cnomapa_Y],AX
+
+        MOV AH,2h                               ; - Posiciona o cursor para
+        MOV DH,23                               ;   coordenada X = 0
+        MOV DL,2                                ;              Y = 19
+        INT 10h
+                MOV     AH,2
+                MOV     DL,AL
+                ADD     DL,30h
+                INT     21h
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+
+                MOV     CS:[Cnomapa_X],AX
+
+        MOV AH,2h                               ; - Posiciona o cursor para
+        MOV DH,23                               ;   coordenada X = 0
+        MOV DL,0                                ;              Y = 19
+        INT 10h
+                MOV     AH,2
+                MOV     DL,AL
+                ADD     DL,30h
+                INT     21h
+
+                MOV     AX,CS:[Cnomapa_Y]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[Cnomapa_X]
+                MOV     BX,AX  
+                MOV     BH,0
+
+        MOV AH,2h                               ; - Posiciona o cursor para
+        MOV DH,23                               ;   coordenada X = 0
+        MOV DL,5                                ;              Y = 19
+        INT 10h
+
+                MOV     AH,2
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+                INT     21h
+
+                CMP     DL,31h
+                JNZ     Cnao_bloq
+
+                CALL    verifica_cim_B
+
+Cnao_bloq:      POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_cim_C endp
+
+verifica_cim_B proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     Cdet_pos_mapaB
+
+Cnomapa_XB       DW      0
+Cnomapa_YB       DW      0
+
+Cdet_pos_mapaB: MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                SUB     AX,2
+                ADD     AX,10
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+                MOV     CS:[Cnomapa_YB],AX
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                ADD     AX,19
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+                MOV     CS:[Cnomapa_XB],AX
+
+                MOV     AX,CS:[Cnomapa_YB]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[Cnomapa_XB]
+                MOV     BX,AX
+                MOV     BH,0
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_cim_B endp

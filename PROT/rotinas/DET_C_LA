@@ -1,0 +1,42 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Determina Cen rio do Layer A                               ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: determina o cen rio (Lyr A) da respectiva posi‡Æo          ;
+;----------------------------------------------------------------------------;
+;       Entradas: DX = x                                                     ;
+;                 BX = y                                                     ;
+;                                                                            ;
+;         Sa¡das: ES:[rpg_det_cenA] conter  o valor respectivo do cen rio.   ;
+;                 ES deve estar apontado para 'rpg_variaveis'.               ;
+;----------------------------------------------------------------------------;
+                        ASSUME  DS:rpg_mapa_A           ;
+                        ASSUME  ES:rpg_variaveis        ;
+rpg_determ_cenA         PROC    NEAR                    ; - In¡cio do PROC.
+                        PUSH    AX                      ; - Salva Registr.
+                        PUSH    BX                      ;
+                        PUSH    CX                      ;
+                        PUSH    DS                      ;
+                        PUSH    ES                      ;
+                        PUSH    DX                      ;
+                        MOV     DX,rpg_mapa_A           ; - Aponta DS para
+                        MOV     DS,DX                   ;   'rpg_mapa_A'
+                        MOV     DX,rpg_variaveis        ; - Aponta ES para
+                        MOV     ES,DX                   ;   'rpg_variaveis'
+                        POP     DX                      ;
+                        ADD     DX,ES:[rpg_cenA_posX]   ; - Posi‡Æo do cenA X.
+                        ADD     BX,ES:[rpg_cenA_posY]   ; - Posi‡Æo do cenA Y.
+                        MOV     AX,WORD PTR DS:[0]      ;
+                        MUL     BL                      ;
+                        MOV     BX,AX                   ;
+                        ADD     BX,DX                   ;
+                        MOV     DL,DS:[BX + 4]          ;
+                        MOV     AX,400                  ;
+                        MUL     DX                      ;
+                        MOV     ES:[rpg_det_cenA],AX    ; 
+                        POP     ES                      ; - Recupera Registr.
+                        POP     DS                      ;
+                        POP     CX                      ;
+                        POP     BX                      ;
+                        POP     AX                      ;
+                        RET                             ; - Retorna.
+rpg_determ_cenA         ENDP                            ; - Fim do PROC.

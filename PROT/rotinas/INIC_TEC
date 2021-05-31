@@ -1,0 +1,42 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Inicializa‡Æo do Teclado para o jogo de RPG                ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Prepara o teclado para leitura                             ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa¡das: nenhuma                                                    ;
+;                                                                            ;
+;           Obs.: rpg_vel_int9[0] contˆm o antigo SEG da INT 9h (teclado)    ;
+;                 rpg_vel_int9[2] contˆm o antigo OFFSET da INT 9h (teclado) ;                
+;                                                                            ;
+;                 DS deve apontar para o segmento de dados 'rpg_variaveis'   ;
+;----------------------------------------------------------------------------;
+; Rotinas utilizadas:  le_tec_direc (le teclas direcionais / arq.: le_tec_d) ;
+;----------------------------------------------------------------------------;
+                ASSUME  DS:rpg_variaveis                ;
+rpg_inic_tec    PROC    NEAR                            ; - In¡cio da PROC.
+                MOV     DX,rpg_variaveis                ; - Aponta DS para
+                MOV     DS,DX                           ;   'rpg_variaveis'.
+                MOV     AL,9h                           ; - Determina a
+                MOV     AH,35h                          ;   antiga INT 9h.
+                INT     21h                             ;
+                MOV     DS:rpg_vel_int9[0],ES           ; - Salva SEG.
+                MOV     DS:rpg_vel_int9[2],BX           ; - Salva OFFSET.
+                MOV     AH,25h                          ; - Define a nova
+                MOV     AL,9h                           ;   INT 9h.
+                MOV     DX,SEG rpg_nov_int9             ;
+                MOV     DS,DX                           ;
+                MOV     DX,OFFSET rpg_nov_int9          ;
+                INT     21h                             ;
+                RET                                     ; 
+rpg_nov_int9:   PUSH    AX                              ; - In¡cio da rotina
+                PUSH    DX                              ;   da nova INT 9h.
+                CALL    le_tec_direc                    ;   
+                MOV     DX,20h                          ; - Avisa ao 8259
+                MOV     AL,20h                          ;   o t‚rmino da
+                OUT     DX,AL                           ;   execu‡Æo da nova
+                POP     DX                              ;   INT 9h.
+                POP     AX                              ;
+                IRET                                    ; - Retorna.
+rpg_inic_tec    ENDP                                    ; - Fim da PROC.
+                INCLUDE rotinas\le_tec_d                ; - Inclui 'le_tec_d'.

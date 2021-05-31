@@ -1,0 +1,139 @@
+
+                ASSUME  ES:rpg_variaveis
+                ASSUME  DS:rpg_mapa_A
+
+verifica_bai_C proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     Bdet_pos_mapa
+
+Bnomapa_X        DW      0
+Bnomapa_Y        DW      0
+
+Bdet_pos_mapa:  MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                ADD     AX,20
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+
+                MOV     CS:[Bnomapa_Y],AX
+
+        MOV AH,2h                               ; - Posiciona o cursor para
+        MOV DH,23                               ;   coordenada X = 0
+        MOV DL,2                                ;              Y = 19
+        INT 10h
+                MOV     AH,2
+                MOV     DL,AL
+                ADD     DL,30h
+                INT     21h
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+
+                MOV     CS:[Bnomapa_X],AX
+
+        MOV AH,2h                               ; - Posiciona o cursor para
+        MOV DH,23                               ;   coordenada X = 0
+        MOV DL,0                                ;              Y = 19
+        INT 10h
+                MOV     AH,2
+                MOV     DL,AL
+                ADD     DL,30h
+                INT     21h
+
+                MOV     AX,CS:[Bnomapa_Y]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[Bnomapa_X]
+                MOV     BX,AX  
+                MOV     BH,0
+
+        MOV AH,2h                               ; - Posiciona o cursor para
+        MOV DH,23                               ;   coordenada X = 0
+        MOV DL,5                                ;              Y = 19
+        INT 10h
+
+                MOV     AH,2
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+                INT     21h
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                CMP     DL,31h
+                JNZ     Bnao_bloq
+
+                CALL    verifica_bai_B
+
+Bnao_bloq:      POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_bai_C endp
+
+verifica_bai_B proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     Bdet_pos_mapaB
+
+Bnomapa_XB       DW      0
+Bnomapa_YB       DW      0
+
+Bdet_pos_mapaB: MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                ADD     AX,20
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+                MOV     CS:[Bnomapa_YB],AX
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                ADD     AX,19
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+                MOV     CS:[Bnomapa_XB],AX
+
+                MOV     AX,CS:[Bnomapa_YB]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[Bnomapa_XB]
+                MOV     BX,AX
+                MOV     BH,0
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_bai_B endp

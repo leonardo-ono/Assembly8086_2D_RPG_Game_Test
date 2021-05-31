@@ -1,0 +1,56 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Le teclado direcionais                                     ;  
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: faz a leitura direcional, inclusive das diagonais          ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhum                                                     ;       
+;         Sa¡das: AL                                                         ;
+;                        AL = 0000 0  0  0  0                                ;                                                 ;
+;                                  B  C  D  E  (1 = tec, 0 = n tecl)         ;
+;----------------------------------------------------------------------------;
+                ASSUME  ES:rpg_variaveis                ;
+le_tec_direc    PROC    NEAR                            ; - In¡cio da PROC.
+                PUSH    ES                              ;
+                PUSH    CX                              ;
+                PUSH    DX                              ;
+                MOV     DX,rpg_variaveis                ;
+                MOV     ES,DX                           ;
+le_tec_repete:  IN      AL,60h                          ; - Lˆ o teclado.
+                CMP     AL,"M"                          ; - Esq. pressionado.
+                JZ      le_tec_esq                      ;
+                CMP     AL,"K"                          ; - Dir. pressionado.
+                JZ      le_tec_dir                      ;
+                CMP     AL,"H"                          ; - Cima pressionado.
+                JZ      le_tec_cim                      ;
+                CMP     AL,"P"                          ; - Baix. pressionado.
+                JZ      le_tec_bai                      ;
+                CMP     AL,"Í"                          ; - Esq. liberara.
+                JZ      le_tec_esq_lib                  ;
+                CMP     AL,"Ë"                          ; - Dir. liberada.
+                JZ      le_tec_dir_lib                  ;
+                CMP     AL,"È"                          ; - Cima liberada.
+                JZ      le_tec_cim_lib                  ;
+                CMP     AL,"Ð"                          ; - Baix. liberada.
+                JZ      le_tec_bai_lib                  ;
+le_tec_repeteb: JMP     le_tec_fim                      ;
+le_tec_esq_lib: AND     ES:[le_tec_status],11111110B    ; 
+                JMP     le_tec_repeteb                  ;
+le_tec_dir_lib: AND     ES:[le_tec_status],11111101B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_cim_lib: AND     ES:[le_tec_status],11111011B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_bai_lib: AND     ES:[le_tec_status],11110111B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_esq:     OR      ES:[le_tec_status],00000001B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_dir:     OR      ES:[le_tec_status],00000010B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_cim:     OR      ES:[le_tec_status],00000100B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_bai:     OR      ES:[le_tec_status],00001000B    ;
+                JMP     le_tec_repeteb                  ;
+le_tec_fim:     POP     DX                              ;
+                POP     CX                              ;
+                POP     ES                              ;
+                RET                                     ; - Retorna.
+le_tec_direc    ENDP                                    ; - Fim da PROC.

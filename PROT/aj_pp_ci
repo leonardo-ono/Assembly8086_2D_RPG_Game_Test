@@ -1,0 +1,26 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Ajusta as coordenadas do Personagem Principal p/ CIMA      ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Reajusta coordenada (cen. e pers.princ.) para a tecla CIMA ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa¡das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+ajst_pp_cim     PROC    NEAR
+                MOV     DX,ES:[rpg_movi_skip]           ; - Ajusta as novas coordenadas verticais do personagem principal quando CIMA for pressionado.
+                SUB     ES:[rpg_prsP_posYF],DX
+                MOV     DX,60                           
+                SUB     DX,ES:[rpg_movi_skip]
+                CMP     ES:[rpg_prsP_posYF],DX          ; - Verifica se o personagem passou limite superior da tela.
+                JZ      p_cim_aj_fino                   ; - Se sim, inicia o rolamento do cen rio ("ajuste FINO").
+                JMP     ajst_pp_cim_rt
+p_cim_aj_fino:  MOV     ES:[rpg_prsP_posYF],60          ; - Inicia o "AJUSTE FINO" do rolamento do cen rio.
+                MOV     DX,ES:[rpg_movi_skip]
+                ADD     ES:[rpg_cenA_posYF],DX
+                CMP     ES:[rpg_cenA_posYF],20
+                JZ      p_cim_aj_gros
+                JMP     ajst_pp_cim_rt
+p_cim_aj_gros:  MOV     ES:[rpg_cenA_posYF],0           ; - Inicia o "AJUSTE GROSSO", quando ele atualiza o cen rio.
+                DEC     ES:[rpg_cenA_posY]
+ajst_pp_cim_rt: RET
+ajst_pp_cim     ENDP

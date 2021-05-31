@@ -1,0 +1,20 @@
+;----------------------------------------------------------------------------;
+;          Dados: Contàm todas as VARIµVEIS essenciais do jogo               ;
+;----------------------------------------------------------------------------;
+;           Obs.: estas vari†veis dever∆o ser inclusas no segmento           ;
+;                 'rpg_variaveis'.                                           ;
+;----------------------------------------------------------------------------;
+le_tec_status   DB 0            ; - Contàm o Status atual do teclado (direcional).
+rpg_vel_int9    DW 2 DUP (0)    ; - Guarda o OFFSET e SEG da INT 9h (teclado) original.
+rpg_det_cenA    DW 0            ; - Indica o n£mero do cenA usado pela 'rpg_des_cenA'.
+rpg_cenA_posX   DW 0            ; - Posiá∆o X inicial do cenA. ("Ajuste grosso")
+rpg_cenA_posY   DW 0            ; - Posiá∆o Y atual do cenA. ("Ajuste grosso")
+rpg_cenA_posXF  DW 0            ; - Posiá∆o X inicial do cenA. ("Ajuste fino")
+rpg_cenA_posYF  DW 0            ; - Posiá∆o Y atual do cenA. ("Ajuste fino")
+rpg_prsP_posXF  DW 160          ; - Posiá∆o X inicial do personagem PRINCIPAL.
+rpg_prsP_posYF  DW 100          ; - Posiá∆o Y inicial do personagem PRINCIPAL.
+rpg_movi_skip   DW 1            ; - Define o SKIP de toda movimentaá∆o do jogo.
+rpg_prsP_framA  DW 0            ; - Define o frame da animaá∆o do personagem principal (esq, dir, bai ou cim).
+rpg_prsP_framB  DW 0            ; - Define o frame dentro de uma direá∆o, ou seja, dentro do 'rpg_prsP_framA'.
+rpg_prsP_frSKP  DW 0            ; - Contador que define a mudanáa do quadro de animaá∆o de um determinado sentido.
+rpg_prsP_frRST  DW 0            ; - Contador que "Reseta" o sentido do personagem quando todas as teclas forem liberadas.

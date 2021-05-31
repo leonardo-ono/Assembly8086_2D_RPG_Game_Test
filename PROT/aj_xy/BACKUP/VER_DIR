@@ -1,0 +1,110 @@
+
+                ASSUME  ES:rpg_variaveis
+                ASSUME  DS:rpg_mapa_A
+
+verifica_dire_C proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     Ddet_pos_mapa
+
+Dnomapa_X        DW      0
+Dnomapa_Y        DW      0
+
+Ddet_pos_mapa:  MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                ADD     AX,10
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+                MOV     CS:[Dnomapa_Y],AX
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                ADD     AX,20
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+                MOV     CS:[Dnomapa_X],AX
+
+                MOV     AX,CS:[Dnomapa_Y]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[Dnomapa_X]
+                MOV     BX,AX
+                MOV     BH,0
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                CMP     DL,31h
+                JNZ     Dnao_bloq
+
+                CALL    verifica_dire_B
+
+Dnao_bloq:      POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_dire_C endp
+
+verifica_dire_B proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     Ddet_pos_mapaB
+
+Dnomapa_XB       DW      0
+Dnomapa_YB       DW      0
+
+Ddet_pos_mapaB: MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                ADD     AX,19
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+                MOV     CS:[Dnomapa_YB],AX
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                ADD     AX,20
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+                MOV     CS:[Dnomapa_XB],AX
+
+                MOV     AX,CS:[Dnomapa_YB]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[Dnomapa_XB]
+                MOV     BX,AX
+                MOV     BH,0
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_dire_B endp

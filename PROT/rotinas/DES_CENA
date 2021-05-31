@@ -1,0 +1,90 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Desenha CENµRIO do Layer A                                 ;
+;----------------------------------------------------------------------------;
+;         Funá∆o: Desenha o Layer A (cen†rio) do jogo                        ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa°das: nenhuma                                                    ;
+;                                                                            ;
+;           Obs.: rpg_cenA_aux_yA    s∆o vari†veis auxiliares que indicam a  ;
+;                 rpg_cenA_aux_xA    posiá∆o inicial de cada cen†rio. Quer   ;
+;                                    dizer, ir† saltar de 20 em 20.          ;
+;                                                                            ;
+;                 Estes dois vari†veis est∆o na pr¢pria rotina sendo         ;
+;                 portanto, referenciados por CS.                            ;
+;                                                                            ;
+;                 DS:[rpg_det_cenA]  Ç a vari†vel que conter† o n£mero       ;
+;                                    equivalente do respectivo cen†rio.      ;
+;                                    DS deve apontar para 'rpg_variaveis'.   ;
+;----------------------------------------------------------------------------;
+; Rotinas utilizadas: des_pnt_opac    (desenha ponto opaco / arq.: des_p_op) ;
+;                     rpg_determ_cenA (determ. cen. lyr A  / arq.: det_c_la) ;
+;----------------------------------------------------------------------------;
+                ASSUME  DS:rpg_variaveis                ;
+                ASSUME  ES:rpg_cenario_A                ;
+rpg_des_cenA    PROC    NEAR                            ; - In°cio do PROC.
+                PUSH    AX                              ; - Salva Registr.
+                PUSH    BX                              ;
+                PUSH    CX                              ;
+                PUSH    DX                              ;
+                PUSH    DI                              ;
+                MOV     DX,rpg_variaveis                ; - Aponto DS para
+                MOV     DS,DX                           ;   'rpg_variaveis'.
+                MOV     DX,rpg_cenario_A                ; - Aponto DS para
+                MOV     ES,DX                           ;   'rpg_cenario_A'.
+                JMP     rpg_cenA_anim                   ;
+rpg_cenA_aux_xA DW      0                               ; - Var. cenA. aux.XA.
+rpg_cenA_aux_yA DW      0                               ; - Var. cenA. aux.YA.
+rpg_cenA_aux_xB DW      0                               ; - Var. cenA. aux.XB.
+rpg_cenA_aux_yB DW      0                               ; - Var. cenA. aux.YB.
+rpg_cenA_anim:  MOV     BX,CS:[rpg_cenA_aux_yB]         ;
+                MOV     DX,CS:[rpg_cenA_aux_xB]         ;
+                CALL    rpg_determ_cenA                 ;
+                MOV     DH,0
+                MOV     CX,0                            ;
+                MOV     BX,0                            ;
+                MOV     DI,0                            ;
+                ADD     DI,DS:[rpg_det_cenA]            ; 
+rpg_cenA_rep:   MOV     DL,ES:[DI]                      ;
+                INC     DI                              ;
+                PUSH    BX                              ;
+                PUSH    CX                              ;
+                ADD     CX,CS:[rpg_cenA_aux_xA]         ;
+                ADD     BX,CS:[rpg_cenA_aux_yA]         ;
+                ADD     CX,DS:[rpg_cenA_posXF]          ;
+                ADD     BX,DS:[rpg_cenA_posYF]          ;
+                CALL    des_pnt_opac                    ;
+                POP     CX                              ;
+                POP     BX                              ;
+                INC     CX                              ;
+                CMP     CX,20                           ;
+                JZ      rpg_cenA_acrY                   ;
+                JMP     rpg_cenA_rep                    ;
+rpg_cenA_acrY:  INC     BX                              ;
+                MOV     CX,0                            ;
+                CMP     BX,20                           ;
+                JZ      rpg_cenA_ctan                   ;
+                JMP     rpg_cenA_rep                    ;
+rpg_cenA_animB: JMP     rpg_cenA_anim                   ;
+rpg_cenA_ctan:  ADD     CS:[rpg_cenA_aux_xA],20         ;
+                INC     CS:[rpg_cenA_aux_xB]            ;
+                CMP     CS:[rpg_cenA_aux_xA],320        ;
+                JNZ     rpg_cenA_anim                   ;
+                MOV     CS:[rpg_cenA_aux_xA],0          ;
+                MOV     CS:[rpg_cenA_aux_xB],0          ;
+                ADD     CS:[rpg_cenA_aux_yA],20         ;
+                INC     CS:[rpg_cenA_aux_yB]            ;
+                CMP     CS:[rpg_cenA_aux_yA],200        ;
+                JNZ     rpg_cenA_animB                  ;
+                MOV     CS:[rpg_cenA_aux_yA],0          ;
+                MOV     CS:[rpg_cenA_aux_yB],0          ;
+                POP     DI                              ; - Recupera Registr.
+                POP     DX                              ;
+                POP     CX                              ;
+                POP     BX                              ;
+                POP     AX                              ;
+                RET                                     ; - Retorna.
+rpg_des_cenA    ENDP                                    ; - Fim do PROC.
+                INCLUDE rotinas\det_c_la                ; - Inclui 'det_c_la'.
+                INCLUDE rotinas\des_p_op                ; - Inclui rotina
+                                                        ;   'des_p_op'.

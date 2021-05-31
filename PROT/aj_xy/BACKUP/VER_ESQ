@@ -1,0 +1,110 @@
+
+                ASSUME  ES:rpg_variaveis
+                ASSUME  DS:rpg_mapa_A
+
+verifica_esqu_C proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     det_pos_mapa
+
+nomapa_X        DW      0
+nomapa_Y        DW      0
+
+det_pos_mapa:   MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                ADD     AX,10
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+                MOV     CS:[nomapa_Y],AX
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                SUB     AX,2
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+                MOV     CS:[nomapa_X],AX
+
+                MOV     AX,CS:[nomapa_Y]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[nomapa_X]
+                MOV     BX,AX
+                MOV     BH,0
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                CMP     DL,31h
+                JNZ     nao_bloq
+
+                CALL    verifica_esqu_B
+
+nao_bloq:       POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_esqu_C endp
+
+verifica_esqu_B proc near
+                PUSH    DS
+                PUSH    ES
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+                MOV     DX,rpg_mapa_A
+                MOV     DS,DX
+
+                JMP     det_pos_mapaB
+
+nomapa_XB       DW      0
+nomapa_YB       DW      0
+
+det_pos_mapaB:  MOV     AX,ES:[rpg_prsP_posYF]
+                SUB     AX,ES:[rpg_cenA_posYF]
+                ADD     AX,19
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posY]
+                MOV     CS:[nomapa_YB],AX
+
+                MOV     AX,ES:[rpg_prsP_posXF]
+                SUB     AX,ES:[rpg_cenA_posXF]
+                SUB     AX,2
+                MOV     BL,20
+                DIV     BL
+                ADD     AX,ES:[rpg_cenA_posX]
+                MOV     CS:[nomapa_XB],AX
+
+                MOV     AX,CS:[nomapa_YB]
+                MOV     BL,20
+                MUL     BL
+                ADD     AX,CS:[nomapa_XB]
+                MOV     BX,AX
+                MOV     BH,0
+
+                MOV     DL,DS:[BX + 4]
+                ADD     DL,30h
+
+                POP     CX
+                POP     BX
+                POP     AX
+                POP     ES
+                POP     DS
+                ret
+verifica_esqu_B endp

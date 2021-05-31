@@ -1,0 +1,184 @@
+                ASSUME  ES:rpg_variaveis
+ajxy            proc    near
+                PUSH ES
+                PUSH DX
+                PUSH AX
+
+                MOV     DX,rpg_variaveis
+                MOV     ES,DX
+
+                MOV     AL,ES:[le_tec_status]
+
+                cmp     al,00000100b
+                jz      cimQ
+                cmp     al,00000010b
+                jz      esqQ
+                cmp     al,00000001b
+                jz      dirQ
+                cmp     al,00001000b
+                jz      baiQ
+
+                INC     ES:[rpg_prsP_frRST]
+                CMP     ES:[rpg_prsP_frRST],20
+                JZ      teclado_RST
+                JMP     retornar
+
+teclado_RST:    MOV     ES:[rpg_prsP_frRST],0
+                MOV     ES:[rpg_prsP_framA],1600
+                MOV     ES:[rpg_prsP_framB],400
+retornab:       JMP     retornar
+
+esqQ:           JMP     esq
+dirQ:           JMP     dir
+cimQ:           JMP     cim
+baiQ:           JMP     bai
+
+cim:
+        MOV     ES:[rpg_prsP_framA],0
+        INC     ES:[rpg_prsP_frSKP]
+        MOV     ES:[rpg_prsP_frRST],0
+
+        CALL verifica_cim_C
+        CMP DL,31h
+        jz cim3
+        CMP DL,30h
+        JZ retornab
+        CMP DL,32h
+        JZ retornab
+
+bai:    MOV     ES:[rpg_prsP_framA],1600
+        INC     ES:[rpg_prsP_frSKP]
+        MOV     ES:[rpg_prsP_frRST],0
+
+        CALL verifica_bai_C
+        CMP DL,31h
+        jz bai3
+        CMP DL,30h
+        JZ retornab
+        CMP DL,32h
+        JZ retornab
+
+dir:    MOV     ES:[rpg_prsP_framA],3200
+        INC     ES:[rpg_prsP_frSKP]
+        MOV     ES:[rpg_prsP_frRST],0
+
+        CALL verifica_dire_C
+        CMP DL,31h
+        jz dir3
+        CMP DL,30h
+        JZ retornab
+        CMP DL,32h
+qwe:    JZ retornab
+
+esq:    MOV     ES:[rpg_prsP_framA],4800
+        INC     ES:[rpg_prsP_frSKP]
+        MOV     ES:[rpg_prsP_frRST],0
+
+        CALL verifica_esqu_C
+        CMP DL,31h
+        jz esq3
+        CMP DL,30h
+        JZ qwe
+        CMP DL,32h
+        JZ qwe
+
+esq3: JMP esq2
+dir3: JMP dir2
+cim3: JMP cim2
+bai3: JMP bai2
+
+cim_aj_grosso:  MOV ES:[rpg_cenA_posYF],0
+                DEC ES:[rpg_cenA_posY]
+                JMP retornar
+bai_aj_grosso:  MOV ES:[rpg_cenA_posYF],0
+                INC ES:[rpg_cenA_posY]
+                JMP retornar
+esq_aj_grosso:  MOV ES:[rpg_cenA_posXF],0
+                DEC ES:[rpg_cenA_posX]
+                JMP retornar
+dir_aj_grosso:  MOV ES:[rpg_cenA_posXF],0
+                INC ES:[rpg_cenA_posX]
+                JMP retornar
+
+cim_aj_fino:    MOV ES:[rpg_prsP_posYF],60
+                MOV DX,ES:[rpg_movi_skip]
+                ADD ES:[rpg_cenA_posYF],DX
+                        CMP ES:[rpg_cenA_posYF],20
+                        JZ  cim_aj_grosso
+                JMP retornar
+bai_aj_fino:    MOV ES:[rpg_prsP_posYF],120
+                MOV DX,ES:[rpg_movi_skip]
+                SUB ES:[rpg_cenA_posYF],DX
+                        CMP ES:[rpg_cenA_posYF],-20
+                        JZ  bai_aj_grosso
+                JMP retornar
+esq_aj_fino:    MOV ES:[rpg_prsP_posXF],80
+                MOV DX,ES:[rpg_movi_skip]
+                ADD ES:[rpg_cenA_posXF],DX
+                        CMP ES:[rpg_cenA_posXF],20
+                        JZ  esq_aj_grosso
+                JMP retornar
+dir_aj_fino:    MOV ES:[rpg_prsP_posXF],220
+                MOV DX,ES:[rpg_movi_skip]
+                SUB ES:[rpg_cenA_posXF],DX
+                        CMP ES:[rpg_cenA_posXF],-20
+                        JZ  dir_aj_grosso
+                JMP retornar
+
+cim_aj_finoB:   JMP cim_aj_fino
+
+cim2:
+                MOV DX,ES:[rpg_movi_skip]
+                SUB     ES:[rpg_prsP_posYF],DX
+
+                MOV DX,60
+                SUB DX,ES:[rpg_movi_skip]
+
+                CMP     ES:[rpg_prsP_posYF],DX
+                JZ      cim_aj_finoB
+                JMP     retornar
+esq2:
+                MOV DX,ES:[rpg_movi_skip]
+                SUB     ES:[rpg_prsP_posXF],DX
+
+                MOV DX,80
+                SUB DX,ES:[rpg_movi_skip]
+
+                CMP     ES:[rpg_prsP_posXF],DX
+                JZ      esq_aj_fino
+                JMP     retornar
+dir2:
+                MOV DX,ES:[rpg_movi_skip]
+                ADD     ES:[rpg_prsP_posXF],DX
+
+                MOV DX,220
+                ADD DX,ES:[rpg_movi_skip]
+
+                CMP     ES:[rpg_prsP_posXF],DX
+                JZ      dir_aj_fino
+                JMP     retornar
+bai2:
+                MOV DX,ES:[rpg_movi_skip]
+                ADD     ES:[rpg_prsP_posYF],DX
+
+                MOV DX,120
+                ADD DX,ES:[rpg_movi_skip]
+
+                CMP     ES:[rpg_prsP_posYF],DX
+                JZ      bai_aj_finob
+                JMP     retornar
+bai_aj_finob:   jmp     bai_aj_fino
+retornar:       POP     AX
+                POP     DX
+                POP     ES
+                ret
+ajxy            endp
+
+verifica_cima   proc near
+                ret
+verifica_cima   endp
+
+INCLUDE         aj_xy\VER_ESQ
+INCLUDE         aj_xy\VER_DIR
+INCLUDE         aj_xy\VER_CIM
+INCLUDE         aj_xy\VER_BAI

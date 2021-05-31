@@ -1,0 +1,58 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Desenha o PERSONAGEM PRINCIPAL                             ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Desenha o PERSONAGEM PRINCIPAL na sua respectiva posi‡Æo   ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa¡das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+                ASSUME   DS:rpg_variaveis               ;
+                ASSUME   ES:rpg_personagens             ;
+des_pers_prc    PROC     NEAR                           ; - In¡cio do PROC.
+                PUSH    AX                              ; - Salva Registr.
+                PUSH    BX                              ;
+                PUSH    CX                              ;
+                PUSH    DX                              ;
+                PUSH    ES                              ;
+                PUSH    DS                              ;
+                MOV     DX,rpg_personagens              ; - Aponta DS para
+                MOV     ES,DX                           ;   'rpg_personagens'.
+                MOV     CX,0                            ;
+                MOV     BX,0                            ;
+                MOV     DI,0                            ;
+                ADD     DI,DS:[rpg_prsP_framA]          ; - Define a imagem inicial da anima‡Æo.
+                ADD     DI,DS:[rpg_prsP_framB]          ; - Define a imagem dentro da imagem inicial.
+des_prpr_rpte:  MOV     DL,ES:[DI]                      ;
+                INC     DI                              ;
+                PUSH    BX                              ; - Salva coordenada provis¢rio.
+                PUSH    CX                              ;
+                ADD     CX,DS:[rpg_prsP_posXF]          ; - Soma a coordenada do personagem principal a (X,Y).
+                ADD     BX,DS:[rpg_prsP_posYF]          ;
+                mov     dh,5                            ;
+                CALL    des_pnt_opac                    ; - Chama a rotina para desenhar ponto a ponto o personagem principal.
+                POP     CX                              ; - Recupera coordenada provis¢rio.
+                POP     BX                              ;
+                INC     CX                              ;
+                CMP     CX,20                           ;
+                JZ      des_prpr_acrY                   ;
+                JMP     des_prpr_rpte                   ;
+des_prpr_acrY:  INC     BX                              ;
+                MOV     CX,0                            ;
+                CMP     BX,20                           ;
+                JZ      des_prpr_term                   ;
+                JMP     des_prpr_rpte                   ;
+des_prpr_term:  CMP     DS:[rpg_prsP_frSKP],10          ; - Define o frame da anima‡Æo do personagem principal.
+                JNZ     des_prpr_finl                   ;
+                MOV     DS:[rpg_prsP_frSKP],0           ;
+                ADD     DS:[rpg_prsP_framB],400         ;
+                CMP     DS:[rpg_prsP_framB],1600        ;
+                JNZ     des_prpr_finl                   ;
+                MOV     DS:[rpg_prsP_framB],0           ;
+des_prpr_finl:  POP     DS                              ; - Recupera Registr.
+                POP     ES                              ;
+                POP     DX                              ;
+                POP     CX                              ;
+                POP     BX                              ;
+                POP     AX                              ;
+                RET                                     ; - Retorna.
+des_pers_prc    ENDP                                    ; - Fim do PROC.

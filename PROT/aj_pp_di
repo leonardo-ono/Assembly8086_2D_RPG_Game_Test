@@ -1,0 +1,26 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Ajusta as coordenadas do Personagem Principal p/ ESQUERDA  ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Reajusta coordenada (cen. e pers.princ.) p/ tecla ESQUERDA ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa¡das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+ajst_pp_dir     PROC    NEAR
+                MOV     DX,ES:[rpg_movi_skip]           ; - Ajusta as novas coordenadas horizontais do personagem principal quando ESQUERDA for pressionado.
+                ADD     ES:[rpg_prsP_posXF],DX
+                MOV     DX,220                          
+                ADD     DX,ES:[rpg_movi_skip]
+                CMP     ES:[rpg_prsP_posXF],DX          ; - Verifica se o personagem passou limite inferior da tela.
+                JZ      p_dir_aj_fino                   ; - Se sim, inicia o rolamento do cen rio ("ajuste FINO").
+                JMP     ajst_pp_dir_rt
+p_dir_aj_fino:  MOV     ES:[rpg_prsP_posXF],220         ; - Inicia o "AJUSTE FINO" do rolamento do cen rio.
+                MOV     DX,ES:[rpg_movi_skip]
+                SUB     ES:[rpg_cenA_posXF],DX
+                CMP     ES:[rpg_cenA_posXF],-20
+                JZ      p_dir_aj_gros
+                JMP     ajst_pp_dir_rt
+p_dir_aj_gros:  MOV     ES:[rpg_cenA_posXF],0           ; - Inicia o "AJUSTE GROSSO", quando ele atualiza o cen rio.
+                INC     ES:[rpg_cenA_posX]
+ajst_pp_dir_rt: RET
+ajst_pp_dir     ENDP

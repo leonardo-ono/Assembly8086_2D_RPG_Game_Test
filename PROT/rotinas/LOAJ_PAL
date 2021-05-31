@@ -1,0 +1,48 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Ajusta_Palette (apenas para o modo 13h)                    ;
+;----------------------------------------------------------------------------;
+;         Funá∆o: Cria um padr∆o de cores espec°ficos (LO Color System)      ;
+;----------------------------------------------------------------------------;
+;       Entradas: BL = intensidade das cores                                 ;
+;                                                                            ;
+;         Sa°das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+locs_aj_pal     PROC    NEAR
+                PUSH    AX
+                PUSH    BX
+                PUSH    CX
+                PUSH    DX
+                JMP     inic_aj_pal
+rgb_pal         DB      0,0,0
+inic_aj_pal:    MOV     CX,0
+repetB_pal:     MOV     SI,0
+                MOV     DX,3C8h
+                MOV     AL,CL
+                OUT     DX,AL
+                INC     DX
+repetC_pal:     MOV     AL,CS:rgb_pal[SI]
+                MOV     BL,12
+                MUL     BL
+                OUT     DX,AL
+                INC     SI
+                CMP     SI,3
+                JNZ     repetC_pal
+                INC     CS:[rgb_pal]
+                MOV     BX,0
+repetA_pal:     CMP     CS:rgb_pal[BX],6
+                JZ      ajustA_pal
+contiA_pal:     INC     BX
+                CMP     BX,2h
+                JNZ     repetA_pal
+                INC     CX
+                CMP     CX,216
+                JNZ     repetB_pal
+                POP     DX
+                POP     CX
+                POP     BX
+                POP     AX
+                RET
+ajustA_pal:     MOV     CS:rgb_pal[BX    ],0
+                INC     CS:rgb_pal[BX + 1]
+                JMP     contiA_pal
+locs_aj_pal     ENDP

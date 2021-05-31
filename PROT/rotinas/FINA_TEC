@@ -1,0 +1,22 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Finaliza‡Æo do Teclado para o jogo de RPG                  ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Recupera a antiga INT 9h, finalizando a leitura do teclado ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa¡das: nenhuma                                                    ;
+;                                                                            ;
+;           Obs.: ES deve apontar para o segmento de dados 'rpg_variaveis'   ;
+;----------------------------------------------------------------------------;
+                ASSUME ES:rpg_variaveis                 ;
+rpg_fina_tec    PROC NEAR                               ; - In¡cio do PROC.
+                MOV DX,rpg_variaveis                    ; - Aponta ES para
+                MOV ES,DX                               ;   'rpg_variaveis'.
+                MOV DX,ES:rpg_vel_int9[0]               ; - Recupera a antiga
+                MOV DS,DX                               ;   INT 9h (teclado).
+                MOV DX,ES:rpg_vel_int9[2]               ;
+                MOV AH,25h                              ;
+                MOV AL,9h                               ;
+                INT 21h                                 ;
+                RET                                     ; - Retorna.
+rpg_fina_tec    ENDP                                    ; - Fim do PROC.

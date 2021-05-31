@@ -1,0 +1,162 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Ajusta as coordenadas do Personagem Principal              ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: Reajusta coordenada (cen. e pers.princ.)                   ;
+;----------------------------------------------------------------------------;
+;       Entradas: nenhuma                                                    ;
+;         Sa¡das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+; Rotinas utilizadas: ajst_pp_cim (ajusta para cima / arq.: aj_pp_ci)        ;
+;----------------------------------------------------------------------------;
+                ASSUME  ES:rpg_variaveis                 
+ajst_prsP_xy    PROC    NEAR                            ; - In¡cio da PROC.
+                PUSH    ES                              ; - Salva Registr.
+                PUSH    DX
+                PUSH    AX
+                MOV     DX,rpg_variaveis                ; - Aponta DS para 'rpg_variaveis'.
+                MOV     ES,DX                           
+                MOV     AL,ES:[le_tec_status]           ; - Joga em AL, a situa‡Æo atual do cursor.
+                CMP     AL,00000100b                    ; - Teclado CIMA ? 
+                JZ      ajst_pp_tcim
+                CMP     AL,00001000b                    ; - Teclado BAIXO ? 
+                JZ      ajst_pp_tbai
+                CMP     AL,00000010b                    ; - Teclado ESQUERDA ? 
+                JZ      ajst_pp_tesq
+                CMP     AL,00000001b                    ; - Teclado DIREITA ? 
+                JZ      ajst_pp_tdir
+                CMP     AL,00000110b                    ; - Teclado CIMA e ESQUERDA ?
+                JZ      ajst_pp_tc_e
+                CMP     AL,00000101b                    ; - Teclado CIMA e DIREITA ?
+                JZ      ajst_pp_tc_d
+                CMP     AL,00001010b                    ; - Teclado BAIXO e ESQUERDA ?
+                JZ      ajst_pp_tb_e
+                CMP     AL,00001001b                    ; - Teclado BAIXO e DIREITA ?
+                JZ      ajst_pp_tb_d
+                JMP     ajst_pp_ret
+ajst_pp_tcim:   JMP     ajst_pp_tcimB
+ajst_pp_tbai:   JMP     ajst_pp_tbaiB
+ajst_pp_tesq:   JMP     ajst_pp_tesqB
+ajst_pp_tdir:   JMP     ajst_pp_tdirB
+ajst_pp_tc_e:   JMP     ajst_pp_tc_eB
+ajst_pp_tc_d:   JMP     ajst_pp_tc_dB
+ajst_pp_tb_e:   JMP     ajst_pp_tb_eB
+ajst_pp_tb_d:   JMP     ajst_pp_tb_dB
+ajst_pp_tcimB:  MOV     ES:[rpg_prsP_framA],0           ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_cim_C
+                CMP DL,31h
+                JNZ ajst_pp_retN
+              
+                CALL    ajst_pp_cim                     ; - Chama a rotina que calcula todas as novas coordenadas para CIMA.
+                JMP     ajst_pp_ret
+ajst_pp_tbaiB:  MOV     ES:[rpg_prsP_framA],1600        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_bai_C
+                CMP DL,31h
+                JNZ ajst_pp_retN
+
+                CALL    ajst_pp_bai
+ajst_pp_retN:   JMP     ajst_pp_ret
+ajst_pp_tesqB:  MOV     ES:[rpg_prsP_framA],4800        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_esqu_C
+                CMP DL,31h
+                JNZ ajst_pp_retN
+
+                CALL    ajst_pp_esq
+                JMP     ajst_pp_ret
+ajst_pp_tdirB:  MOV     ES:[rpg_prsP_framA],3200        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_dire_C
+                CMP DL,31h
+                JNZ ajst_pp_retN
+
+                CALL    ajst_pp_dir
+                JMP     ajst_pp_ret
+ajst_pp_tc_eB:  MOV     ES:[rpg_prsP_framA],4800        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_cim_C
+                CMP DL,31h
+                JNZ ajst_pp_voN
+
+                CALL    ajst_pp_cim
+
+ajst_pp_voN:    CALL verifica_esqu_C
+                CMP DL,31h
+                JNZ ajst_pp_retN
+
+                CALL    ajst_pp_esq
+                JMP     ajst_pp_ret
+ajst_pp_tc_dB:  MOV     ES:[rpg_prsP_framA],3200        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_cim_C
+                CMP DL,31h
+                JNZ ajst_pp_voM
+
+                CALL    ajst_pp_cim
+
+ajst_pp_voM:    CALL verifica_dire_C
+                CMP DL,31h
+                JNZ ajst_pp_retM
+
+                CALL    ajst_pp_dir
+                JMP     ajst_pp_ret
+ajst_pp_tb_eB:  MOV     ES:[rpg_prsP_framA],4800        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_bai_C
+                CMP DL,31h
+                JNZ ajst_pp_voK
+
+                CALL    ajst_pp_bai
+
+ajst_pp_voK:    CALL verifica_esqu_C
+                CMP DL,31h
+                JNZ ajst_pp_retM
+
+                CALL    ajst_pp_esq
+ajst_pp_retM:   JMP     ajst_pp_ret
+ajst_pp_tb_dB:  MOV     ES:[rpg_prsP_framA],3200        ; - Ajusta os frames de anima‡Æo do personagem principal.
+                INC     ES:[rpg_prsP_frSKP]
+                MOV     ES:[rpg_prsP_frRST],0
+
+                CALL verifica_bai_C
+                CMP DL,31h
+                JNZ ajst_pp_voL
+
+                CALL    ajst_pp_bai
+
+ajst_pp_voL:    CALL verifica_dire_C
+                CMP DL,31h
+                JNZ ajst_pp_retM
+
+                CALL    ajst_pp_dir
+                JMP     ajst_pp_ret
+ajst_pp_ret:    POP     AX                              ; - Recupera Registr.
+                POP     DX
+                POP     ES
+                RET                                     ; - Retorna.
+ajst_prsP_xy    ENDP                                    ; - Fim da PROC.
+                INCLUDE aj_pp_ci                        ; - Inclui as rotinas que cuidam quando CIMA ‚ pressionado.
+                INCLUDE aj_pp_ba                        ; - Inclui as rotinas que cuidam quando BAIXO ‚ pressionado.
+                INCLUDE aj_pp_es                        ; - Inclui as rotinas que cuidam quando ESQUERDA ‚ pressionado.
+                INCLUDE aj_pp_di                        ; - Inclui as rotinas que cuidam quando DIREITA ‚ pressionado.
+
+                INCLUDE         aj_xy\VER_ESQ
+                INCLUDE         aj_xy\VER_DIR
+                INCLUDE         aj_xy\VER_CIM
+                INCLUDE         aj_xy\VER_BAI
+

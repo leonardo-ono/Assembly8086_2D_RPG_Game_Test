@@ -1,0 +1,15 @@
+;----------------------------------------------------------------------------;
+;         Rotina: Define o modo de v¡deo                                     ;
+;----------------------------------------------------------------------------;
+;         Fun‡Æo: altera o modo de v¡deo atual do monitor                    ;
+;----------------------------------------------------------------------------;
+;       Entradas: AL = modo de v¡deo                                         ;
+;         Sa¡das: nenhuma                                                    ;
+;----------------------------------------------------------------------------;
+modo_video      PROC    NEAR                            ; - In¡cio do PROC.
+                PUSH    AX                              ;
+                MOV     AH,0                            ; - Altera o modo de
+                INT     10h                             ;   v¡deo conforme AL.
+                POP     AX                              ;
+                RET                                     ; - Retorna.
+modo_video      ENDP                                    ; - Fim do PROC.
